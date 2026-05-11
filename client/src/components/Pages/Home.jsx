@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Container, Row, Col, Button, Card, Badge } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import {  useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
+  const cartRef = useRef(null);
+
+  const [cart, setCart] = useState([]);
 
   const categories = [
     {
@@ -28,24 +31,88 @@ const Home = () => {
 
   const featured = [
     {
+      id: 1,
       name: "Inferno Burger",
-      price: "£8.99",
+      price: 8.99,
       tag: "Best Seller",
       img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=900&q=80",
     },
     {
+      id: 2,
       name: "Crispy Chicken",
-      price: "£7.49",
+      price: 7.49,
       tag: "Hot",
       img: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=900&q=80",
     },
     {
+      id: 3,
       name: "Mega Stack",
-      price: "£11.99",
+      price: 11.99,
       tag: "Premium",
       img: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=900&q=80",
     },
   ];
+
+  const addToCart = (item) => {
+    setCart((prev) => {
+      const exists = prev.find((cartItem) => cartItem.id === item.id);
+
+      if (exists) {
+        return prev.map((cartItem) =>
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
+      }
+
+      return [...prev, { ...item, quantity: 1 }];
+    });
+
+    if (window.innerWidth <= 991) {
+      setTimeout(() => {
+        cartRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 150);
+    }
+  };
+
+  const increaseQty = (id) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const decreaseQty = (id) => {
+    setCart((prev) =>
+      prev
+        .map((item) =>
+          item.id === id
+            ? { ...item, quantity: Math.max(item.quantity - 1, 0) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeItem = (id) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const subtotal = useMemo(() => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }, [cart]);
+
+  const deliveryFee = cart.length > 0 ? 2.99 : 0;
+  const total = subtotal + deliveryFee;
+  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -415,6 +482,176 @@ const Home = () => {
           transform:rotate(90deg) scale(1.08);
         }
 
+        .hb-cart-panel{
+          margin-top:80px;
+          border-radius:36px;
+          padding:30px;
+          background:
+            linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+          border:1px solid rgba(255,176,0,.18);
+          backdrop-filter:blur(18px);
+          box-shadow:0 35px 95px rgba(0,0,0,.45);
+          scroll-margin-top:95px;
+        }
+
+        .hb-cart-head{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:24px;
+        }
+
+        .hb-cart-head h3{
+          margin:0;
+          font-size:34px;
+          font-weight:950;
+        }
+
+        .hb-cart-count{
+          min-width:42px;
+          height:42px;
+          border-radius:50%;
+          display:grid;
+          place-items:center;
+          background:linear-gradient(135deg,var(--orange),var(--amber));
+          color:#210804;
+          font-weight:950;
+        }
+
+        .hb-empty-cart{
+          padding:38px 20px;
+          text-align:center;
+          border-radius:26px;
+          border:1px dashed rgba(255,176,0,.25);
+          color:var(--sand);
+        }
+
+        .hb-empty-cart i{
+          display:block;
+          color:var(--amber);
+          font-size:44px;
+          margin-bottom:12px;
+        }
+
+        .hb-cart-list{
+          display:grid;
+          grid-template-columns:repeat(3, 1fr);
+          gap:18px;
+        }
+
+        .hb-cart-item{
+          display:grid;
+          grid-template-columns:70px 1fr auto;
+          gap:14px;
+          align-items:center;
+          padding:14px;
+          border-radius:24px;
+          background:rgba(255,255,255,.04);
+          border:1px solid rgba(255,176,0,.1);
+        }
+
+        .hb-cart-img{
+          width:70px;
+          height:70px;
+          border-radius:18px;
+          object-fit:cover;
+        }
+
+        .hb-cart-name{
+          font-weight:950;
+          margin-bottom:4px;
+        }
+
+        .hb-cart-small{
+          color:var(--sand);
+          font-size:13px;
+        }
+
+        .hb-cart-controls{
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin-top:8px;
+        }
+
+        .hb-qty-btn{
+          width:28px;
+          height:28px;
+          border-radius:50%!important;
+          border:1px solid rgba(255,176,0,.25)!important;
+          background:rgba(255,255,255,.05)!important;
+          color:var(--amber)!important;
+          display:grid!important;
+          place-items:center;
+          padding:0!important;
+        }
+
+        .hb-qty{
+          min-width:24px;
+          text-align:center;
+          font-weight:900;
+        }
+
+        .hb-remove{
+          border:none!important;
+          background:transparent!important;
+          color:#ff7a4d!important;
+          padding:0!important;
+          font-size:18px!important;
+        }
+
+        .hb-cart-price{
+          color:var(--amber);
+          font-weight:950;
+          text-align:right;
+          white-space:nowrap;
+          margin-top:8px;
+        }
+
+        .hb-bill{
+          margin-top:26px;
+          padding-top:22px;
+          border-top:1px solid rgba(255,176,0,.14);
+          max-width:520px;
+          margin-left:auto;
+        }
+
+        .hb-bill-row{
+          display:flex;
+          justify-content:space-between;
+          color:var(--sand);
+          margin-bottom:12px;
+        }
+
+        .hb-bill-row.total{
+          color:var(--cream);
+          font-size:24px;
+          font-weight:950;
+          margin-top:14px;
+        }
+
+        .hb-checkout{
+          width:100%;
+          margin-top:18px;
+          border:none!important;
+          border-radius:999px!important;
+          padding:15px!important;
+          background:linear-gradient(135deg,var(--orange),var(--amber))!important;
+          color:#210804!important;
+          font-weight:950!important;
+        }
+
+        .hb-clear{
+          width:100%;
+          margin-top:12px;
+          border-radius:999px!important;
+          padding:12px!important;
+          border:1px solid rgba(255,176,0,.18)!important;
+          background:rgba(255,255,255,.04)!important;
+          color:var(--cream)!important;
+          font-weight:800!important;
+        }
+
         .hb-delivery{
           border-radius:38px;
           overflow:hidden;
@@ -501,6 +738,14 @@ const Home = () => {
           .hb-category-card{
             height:360px;
           }
+
+          .hb-cart-list{
+            grid-template-columns:1fr;
+          }
+
+          .hb-bill{
+            max-width:100%;
+          }
         }
 
         @media(max-width:768px){
@@ -508,8 +753,9 @@ const Home = () => {
             padding:75px 0;
           }
 
-          .hb-delivery{
-            padding:60px 24px;
+          .hb-delivery,
+          .hb-cart-panel{
+            padding:28px 20px;
           }
 
           .hb-food-img{
@@ -560,20 +806,20 @@ const Home = () => {
               </p>
 
               <div className="hb-hero-buttons">
-                <Button className="hb-btn hb-btn-primary" onClick={() => {
-                  navigate("/menu");
-                  setShow(false);
-                }}
+                <Button
+                  className="hb-btn hb-btn-primary"
+                  onClick={() => navigate("/menu")}
                 >
                   <i className="bi bi-bag-fill me-2"></i>
                   Order Now
                 </Button>
 
-                <Button className="hb-btn hb-btn-outline" onClick={() => {
-                  navigate("/menu");
-                  setShow(false);
-                }}
-                >View Menu</Button>
+                <Button
+                  className="hb-btn hb-btn-outline"
+                  onClick={() => navigate("/menu")}
+                >
+                  View Menu
+                </Button>
               </div>
 
               <div className="hb-stats">
@@ -610,7 +856,10 @@ const Home = () => {
             <Row className="g-4">
               {categories.map((item, index) => (
                 <Col lg={4} md={6} key={index}>
-                  <div className="hb-category-card">
+                  <div
+                    className="hb-category-card"
+                    onClick={() => navigate("/menu")}
+                  >
                     <img src={item.img} alt={item.title} />
 
                     <div className="hb-category-content">
@@ -641,12 +890,11 @@ const Home = () => {
             </div>
 
             <Row className="g-4">
-              {featured.map((item, index) => (
-                <Col lg={4} md={6} key={index}>
+              {featured.map((item) => (
+                <Col lg={4} md={6} key={item.id}>
                   <Card className="hb-food-card">
                     <div className="hb-food-img">
                       <img src={item.img} alt={item.name} />
-
                       <Badge className="hb-badge">{item.tag}</Badge>
                     </div>
 
@@ -659,9 +907,12 @@ const Home = () => {
                       </p>
 
                       <div className="hb-price-row">
-                        <div className="hb-price">{item.price}</div>
+                        <div className="hb-price">£{item.price.toFixed(2)}</div>
 
-                        <Button className="hb-add">
+                        <Button
+                          className="hb-add"
+                          onClick={() => addToCart(item)}
+                        >
                           <i className="bi bi-plus-lg"></i>
                         </Button>
                       </div>
@@ -670,6 +921,102 @@ const Home = () => {
                 </Col>
               ))}
             </Row>
+
+            <div className="hb-cart-panel" ref={cartRef}>
+              <div className="hb-cart-head">
+                <h3>Your Cart</h3>
+                <div className="hb-cart-count">{totalItems}</div>
+              </div>
+
+              {cart.length === 0 ? (
+                <div className="hb-empty-cart">
+                  <i className="bi bi-bag"></i>
+                  <strong>No items added yet</strong>
+                  <p className="mb-0 mt-2">
+                    Click plus button to add featured meals.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="hb-cart-list">
+                    {cart.map((item) => (
+                      <div className="hb-cart-item" key={item.id}>
+                        <img
+                          src={item.img}
+                          alt={item.name}
+                          className="hb-cart-img"
+                        />
+
+                        <div>
+                          <div className="hb-cart-name">{item.name}</div>
+
+                          <div className="hb-cart-small">
+                            £{item.price.toFixed(2)} each
+                          </div>
+
+                          <div className="hb-cart-controls">
+                            <Button
+                              className="hb-qty-btn"
+                              onClick={() => decreaseQty(item.id)}
+                            >
+                              <i className="bi bi-dash"></i>
+                            </Button>
+
+                            <span className="hb-qty">{item.quantity}</span>
+
+                            <Button
+                              className="hb-qty-btn"
+                              onClick={() => increaseQty(item.id)}
+                            >
+                              <i className="bi bi-plus"></i>
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Button
+                            className="hb-remove"
+                            onClick={() => removeItem(item.id)}
+                          >
+                            <i className="bi bi-x-circle"></i>
+                          </Button>
+
+                          <div className="hb-cart-price">
+                            £{(item.price * item.quantity).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hb-bill">
+                    <div className="hb-bill-row">
+                      <span>Subtotal</span>
+                      <strong>£{subtotal.toFixed(2)}</strong>
+                    </div>
+
+                    <div className="hb-bill-row">
+                      <span>Delivery Fee</span>
+                      <strong>£{deliveryFee.toFixed(2)}</strong>
+                    </div>
+
+                    <div className="hb-bill-row total">
+                      <span>Total</span>
+                      <span>£{total.toFixed(2)}</span>
+                    </div>
+
+                    <Button className="hb-checkout">
+                      <i className="bi bi-credit-card-fill me-2"></i>
+                      Checkout
+                    </Button>
+
+                    <Button className="hb-clear" onClick={clearCart}>
+                      Clear Cart
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
           </Container>
         </section>
 
