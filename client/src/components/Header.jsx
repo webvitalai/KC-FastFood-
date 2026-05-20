@@ -24,6 +24,7 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -40,7 +41,7 @@ const Header = () => {
     <>
       <style>{`
         .hb-navbar {
-          height: 92px;
+          height: 96px;
           width: 100%;
           position: fixed !important;
           top: 0;
@@ -49,15 +50,16 @@ const Header = () => {
           transition: all .35s ease;
           background: linear-gradient(
             180deg,
-            rgba(7,2,1,.82),
-            rgba(7,2,1,.28)
+            rgba(7,2,1,.86),
+            rgba(7,2,1,.35)
           );
         }
 
         .hb-navbar.scrolled {
-          height: 76px;
-          background: rgba(13,4,2,.92);
+          height: 82px;
+          background: rgba(13,4,2,.94);
           backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
           border-bottom: 1px solid rgba(255,176,0,.18);
           box-shadow: 0 20px 60px rgba(0,0,0,.38);
         }
@@ -71,24 +73,53 @@ const Header = () => {
           font-size: 32px;
           font-weight: 950;
           letter-spacing: -1px;
+          line-height: 1;
+          white-space: nowrap;
         }
 
         .hb-brand span {
           color: #ff3d00;
         }
 
+        /* ACTUAL LOGO */
         .hb-logo {
-          width: 54px;
-          height: 54px;
-          border-radius: 18px;
-          display: grid;
-          place-items: center;
-          color: #210804;
-          font-size: 26px;
-          background: linear-gradient(135deg, #ff3d00, #ffb000);
-          box-shadow: 0 18px 45px rgba(255,61,0,.35);
-          position: relative;
-          overflow: hidden;
+          width: 86px;
+          height: 76px;
+          min-width: 86px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          overflow: visible;
+        }
+
+        .hb-logo-img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+
+          filter:
+            brightness(1.12)
+            contrast(1.2)
+            saturate(1.15)
+            drop-shadow(0 5px 8px rgba(0,0,0,.45))
+            drop-shadow(0 0 12px rgba(255,176,0,.24));
+
+          transition: .35s ease;
+        }
+
+        .hb-brand:hover .hb-logo-img {
+          transform: scale(1.06);
         }
 
         .hb-nav {
@@ -97,6 +128,7 @@ const Header = () => {
           border-radius: 999px;
           padding: 8px 12px;
           backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
         }
 
         .hb-nav-link {
@@ -166,6 +198,11 @@ const Header = () => {
           border-left: 1px solid rgba(255,176,0,.16);
         }
 
+        .hb-offcanvas .btn-close {
+          filter: invert(1);
+          opacity: .9;
+        }
+
         .hb-mobile-nav {
           margin-top: 35px;
           gap: 14px;
@@ -178,21 +215,84 @@ const Header = () => {
           border-bottom: 1px solid rgba(255,176,0,.12);
         }
 
-        @media (max-width: 991px) {
-          .hb-navbar {
-            height: 78px;
-            background: rgba(13,4,2,.94);
-            backdrop-filter: blur(16px);
-          }
-
+        @media (max-width: 1199px) {
           .hb-brand {
-            font-size: 26px;
+            font-size: 29px;
           }
 
           .hb-logo {
-            width: 46px;
-            height: 46px;
-            font-size: 22px;
+            width: 78px;
+            height: 68px;
+            min-width: 78px;
+          }
+
+          .hb-nav-link {
+            padding: 10px 12px !important;
+            font-size: 12px;
+          }
+        }
+
+        @media (max-width: 991px) {
+          .hb-navbar {
+            height: 82px;
+            background: rgba(13,4,2,.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+          }
+
+          .hb-navbar.scrolled {
+            height: 78px;
+          }
+
+          .hb-brand {
+            font-size: 25px;
+            gap: 10px;
+          }
+
+          .hb-logo {
+            width: 66px;
+            height: 58px;
+            min-width: 66px;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .hb-navbar {
+            height: 78px;
+          }
+
+          .hb-navbar.scrolled {
+            height: 74px;
+          }
+
+          .hb-brand {
+            font-size: 21px;
+            letter-spacing: -0.6px;
+          }
+
+          .hb-logo {
+            width: 60px;
+            height: 52px;
+            min-width: 60px;
+          }
+
+          .hb-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px !important;
+          }
+        }
+
+        @media (max-width: 390px) {
+          .hb-brand {
+            font-size: 18px;
+            gap: 8px;
+          }
+
+          .hb-logo {
+            width: 54px;
+            height: 48px;
+            min-width: 54px;
           }
         }
       `}</style>
@@ -203,15 +303,14 @@ const Header = () => {
         className={`hb-navbar ${scrolled ? "scrolled" : ""}`}
       >
         <Container>
-
           {/* LOGO */}
-          <Navbar.Brand
-            as={NavLink}
-            to="/"
-            className="hb-brand"
-          >
+          <Navbar.Brand as={NavLink} to="/" className="hb-brand">
             <div className="hb-logo">
-              <i className="bi bi-fire"></i>
+              <img
+                src="/Images/Logo.webp"
+                alt="KC Fast Food Logo"
+                className="hb-logo-img"
+              />
             </div>
 
             KC<span>Fast Food</span>
@@ -227,9 +326,7 @@ const Header = () => {
 
           {/* DESKTOP NAV */}
           <Navbar.Collapse className="d-none d-lg-flex justify-content-end">
-
             <Nav className="hb-nav align-items-center gap-1 me-3">
-
               {links.map((link, index) => (
                 <NavLink
                   key={index}
@@ -239,7 +336,6 @@ const Header = () => {
                   {link.name}
                 </NavLink>
               ))}
-
             </Nav>
 
             <Button
@@ -249,7 +345,6 @@ const Header = () => {
               <i className="bi bi-bag-fill"></i>
               Order Now
             </Button>
-
           </Navbar.Collapse>
 
           {/* MOBILE MENU */}
@@ -261,20 +356,20 @@ const Header = () => {
           >
             <Offcanvas.Header closeButton>
               <Offcanvas.Title className="hb-brand">
-
                 <div className="hb-logo">
-                  <i className="bi bi-fire"></i>
+                  <img
+                    src="/Images/Logo.webp"
+                    alt="KC Fast Food Logo"
+                    className="hb-logo-img"
+                  />
                 </div>
 
-                Hungry<span>Bites</span>
-
+                KC<span>Fast Food</span>
               </Offcanvas.Title>
             </Offcanvas.Header>
 
             <Offcanvas.Body>
-
               <Nav className="hb-mobile-nav">
-
                 {links.map((link, index) => (
                   <NavLink
                     key={index}
@@ -296,12 +391,9 @@ const Header = () => {
                   <i className="bi bi-bag-fill"></i>
                   Order Now
                 </Button>
-
               </Nav>
-
             </Offcanvas.Body>
           </Offcanvas>
-
         </Container>
       </Navbar>
     </>

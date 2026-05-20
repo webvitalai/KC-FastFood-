@@ -60,36 +60,49 @@ const Footer = () => {
         .hb-brand {
           display: flex;
           align-items: center;
-          gap: 15px;
+          gap: 16px;
           margin-bottom: 24px;
         }
 
-        .hb-brand-icon {
-          width: 64px;
-          height: 64px;
-          border-radius: 20px;
-          display: grid;
-          place-items: center;
-          font-size: 28px;
-          color: #210804;
-          background: linear-gradient(135deg, #ff3d00, #ffb000);
-          box-shadow: 0 22px 55px rgba(255,61,0,.35);
-          position: relative;
-          overflow: hidden;
+        /* UPDATED LOGO */
+        .hb-brand-logo {
+          width: 92px;
+          height: 82px;
+          min-width: 92px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          overflow: visible;
         }
 
-        .hb-brand-icon::after {
-          content: "";
-          position: absolute;
-          inset: -40%;
-          background: linear-gradient(
-            120deg,
-            transparent,
-            rgba(255,255,255,.6),
-            transparent
-          );
-          transform: translateX(-120%) rotate(20deg);
-          animation: shine 4s infinite;
+        .hb-brand-logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+
+          filter:
+            brightness(1.12)
+            contrast(1.22)
+            saturate(1.15)
+            drop-shadow(0 6px 9px rgba(0,0,0,.5))
+            drop-shadow(0 0 14px rgba(255,176,0,.25));
+
+          transition: .35s ease;
+        }
+
+        .hb-brand:hover .hb-brand-logo img {
+          transform: scale(1.06);
         }
 
         .hb-brand-text {
@@ -136,6 +149,7 @@ const Footer = () => {
           background: rgba(255,255,255,.04);
           border: 1px solid rgba(255,176,0,.16);
           backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
           transition: .35s ease;
         }
 
@@ -333,18 +347,19 @@ const Footer = () => {
           font-size: 18px;
         }
 
-        @keyframes shine {
-          0% {
-            transform: translateX(-120%) rotate(20deg);
-          }
-          45%,100% {
-            transform: translateX(120%) rotate(20deg);
-          }
-        }
-
         @media (max-width: 1100px) {
           .hb-top {
             grid-template-columns: repeat(2,1fr);
+          }
+
+          .hb-brand-logo {
+            width: 84px;
+            height: 74px;
+            min-width: 84px;
+          }
+
+          .hb-brand-text {
+            font-size: 34px;
           }
         }
 
@@ -354,8 +369,18 @@ const Footer = () => {
             gap: 45px;
           }
 
+          .hb-brand {
+            gap: 12px;
+          }
+
+          .hb-brand-logo {
+            width: 74px;
+            height: 66px;
+            min-width: 74px;
+          }
+
           .hb-brand-text {
-            font-size: 32px;
+            font-size: 30px;
           }
 
           .hb-bottom {
@@ -363,19 +388,31 @@ const Footer = () => {
             text-align: center;
           }
         }
+
+        @media (max-width: 390px) {
+          .hb-brand-logo {
+            width: 66px;
+            height: 58px;
+            min-width: 66px;
+          }
+
+          .hb-brand-text {
+            font-size: 26px;
+          }
+        }
       `}</style>
 
       <footer className="hb-footer">
         <div className="hb-footer-wrapper">
-
           <div className="hb-top">
-
             {/* Brand */}
             <div>
-
               <div className="hb-brand">
-                <div className="hb-brand-icon">
-                  <i className="bi bi-fire"></i>
+                <div className="hb-brand-logo">
+                  <img
+                    src="/Images/Logo.webp"
+                    alt="KC Fast Food Logo"
+                  />
                 </div>
 
                 <div className="hb-brand-text">
@@ -394,37 +431,31 @@ const Footer = () => {
               </p>
 
               <div className="hb-socials">
-
-                <a href="#">
+                <a href="#" aria-label="Instagram">
                   <i className="bi bi-instagram"></i>
                 </a>
 
-                <a href="#">
+                <a href="#" aria-label="Facebook">
                   <i className="bi bi-facebook"></i>
                 </a>
 
-                <a href="#">
+                <a href="#" aria-label="TikTok">
                   <i className="bi bi-tiktok"></i>
                 </a>
 
-                <a href="#">
+                <a href="#" aria-label="X Twitter">
                   <i className="bi bi-twitter-x"></i>
                 </a>
 
-                <a href="#">
+                <a href="#" aria-label="YouTube">
                   <i className="bi bi-youtube"></i>
                 </a>
-
               </div>
-
             </div>
 
             {/* Quick Links */}
             <div>
-
-              <h4 className="hb-heading">
-                Quick Links
-              </h4>
+              <h4 className="hb-heading">Quick Links</h4>
 
               <ul className="hb-links">
                 <li><a href="#home">Home</a></li>
@@ -434,15 +465,11 @@ const Footer = () => {
                 <li><a href="#locations">Find Us</a></li>
                 <li><a href="#order">Order Online</a></li>
               </ul>
-
             </div>
 
             {/* Popular */}
             <div>
-
-              <h4 className="hb-heading">
-                Popular Items
-              </h4>
+              <h4 className="hb-heading">Popular Items</h4>
 
               <ul className="hb-links">
                 <li><a href="#">Signature Burgers</a></li>
@@ -452,18 +479,13 @@ const Footer = () => {
                 <li><a href="#">Family Deals</a></li>
                 <li><a href="#">Milkshakes</a></li>
               </ul>
-
             </div>
 
             {/* Contact */}
             <div>
-
-              <h4 className="hb-heading">
-                Contact Us
-              </h4>
+              <h4 className="hb-heading">Contact Us</h4>
 
               <div className="hb-contact-box">
-
                 <div className="hb-contact-icon">
                   <i className="bi bi-geo-alt-fill"></i>
                 </div>
@@ -472,16 +494,14 @@ const Footer = () => {
                   <h6>Location</h6>
 
                   <p>
-                    297 Bradford Rd, Batley WF17 6HY 
+                    297 Bradford Rd, Batley WF17 6HY
                     <br />
                     United Kingdom
                   </p>
                 </div>
-
               </div>
 
               <div className="hb-contact-box">
-
                 <div className="hb-contact-icon">
                   <i className="bi bi-telephone-fill"></i>
                 </div>
@@ -491,11 +511,9 @@ const Footer = () => {
 
                   <p>+44 1924 359444</p>
                 </div>
-
               </div>
 
               <div className="hb-contact-box">
-
                 <div className="hb-contact-icon">
                   <i className="bi bi-clock-fill"></i>
                 </div>
@@ -505,11 +523,9 @@ const Footer = () => {
 
                   <p>Mon - Sun · 11:00 AM - 11:00 PM</p>
                 </div>
-
               </div>
 
               <div className="hb-newsletter">
-
                 <h5>Get Weekly Deals</h5>
 
                 <p>
@@ -525,17 +541,13 @@ const Footer = () => {
                 <button className="hb-newsletter-btn">
                   Subscribe Now
                 </button>
-
               </div>
-
             </div>
-
           </div>
 
           <div className="hb-bottom">
-
             <p>
-              © 2026 <strong>HungryBites</strong>. All Rights Reserved.
+              © 2026 <strong>KC Fast Food</strong>. All Rights Reserved.
             </p>
 
             <div className="hb-payments">
@@ -548,9 +560,7 @@ const Footer = () => {
             <p>
               Designed with fire. Built for flavour.
             </p>
-
           </div>
-
         </div>
       </footer>
     </>
